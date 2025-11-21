@@ -7,8 +7,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
         <c:choose>
-            <c:when test="${student != null}">Edit Student</c:when>
-            <c:otherwise>Add New Student</c:otherwise>
+            <c:when test="${isEdit}">
+                Edit Student
+            </c:when>
+            <c:otherwise>
+                Add New Student
+            </c:otherwise>
         </c:choose>
     </title>
     <style>
@@ -17,7 +21,12 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+        .error {
+            color: red;
+            font-size: 14px;
+            display: block;
+            margin-top: 5px;
+        }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -127,22 +136,22 @@
     <div class="container">
         <h1>
             <c:choose>
-                <c:when test="${student != null}">
-                    ✏️ Edit Student
+                <c:when test="${isEdit}">
+                    Edit Student
                 </c:when>
                 <c:otherwise>
-                    ➕ Add New Student
+                    Add New Student
                 </c:otherwise>
             </c:choose>
         </h1>
         
         <form action="student" method="POST">
             <!-- Hidden field for action -->
-            <input type="hidden" name="action" 
-                   value="${student != null ? 'update' : 'insert'}">
+            <input type="hidden" name="action" value="${isEdit ? 'update' : 'insert'}">
+
             
             <!-- Hidden field for ID (only for update) -->
-            <c:if test="${student != null}">
+            <c:if test="${isEdit}">
                 <input type="hidden" name="id" value="${student.id}">
             </c:if>
             
@@ -155,8 +164,11 @@
                        id="studentCode" 
                        name="studentCode" 
                        value="${student.studentCode}"
-                       ${student != null ? 'readonly' : 'required'}
+                       ${isEdit ? 'readonly' : ''}
                        placeholder="e.g., SV001, IT123">
+                <c:if test="${not empty errorCode}">
+                    <span class="error">${errorCode}</span>
+                </c:if>
                 <p class="info-text">Format: 2 letters + 3+ digits</p>
             </div>
             
@@ -171,6 +183,9 @@
                        value="${student.fullName}"
                        required
                        placeholder="Enter full name">
+                <c:if test="${not empty errorName}">
+                    <span class="error">${errorName}</span>
+                </c:if>
             </div>
             
             <!-- Email -->
@@ -184,6 +199,9 @@
                        value="${student.email}"
                        required
                        placeholder="student@example.com">
+                <c:if test="${not empty errorEmail}">
+                    <span class="error">${errorEmail}</span>
+                </c:if>
             </div>
             
             <!-- Major -->
@@ -193,9 +211,21 @@
                 </label>
                 <select id="major" name="major" required>
                     <option value="">-- Select Major --</option>
+                    <option value="Ecommerce" 
+                            ${student.major == 'Ecommerce' ? 'selected' : ''}>
+                        Ecommerce
+                    </option>
+                    <option value="Marketing" 
+                            ${student.major == 'Marketing' ? 'selected' : ''}>
+                        Marketing
+                    </option>
                     <option value="Computer Science" 
                             ${student.major == 'Computer Science' ? 'selected' : ''}>
                         Computer Science
+                    </option>
+                    <option value="Data Science" 
+                            ${student.major == 'Data Science' ? 'selected' : ''}>
+                        Data Science
                     </option>
                     <option value="Information Technology" 
                             ${student.major == 'Information Technology' ? 'selected' : ''}>
@@ -210,13 +240,16 @@
                         Business Administration
                     </option>
                 </select>
+                <c:if test="${not empty errorMajor}">
+                    <span class="error">${errorMajor}</span>
+                </c:if>
             </div>
             
             <!-- Buttons -->
             <div class="button-group">
                 <button type="submit" class="btn btn-primary">
                     <c:choose>
-                        <c:when test="${student != null}">
+                        <c:when test="${isEdit}">
                             💾 Update Student
                         </c:when>
                         <c:otherwise>

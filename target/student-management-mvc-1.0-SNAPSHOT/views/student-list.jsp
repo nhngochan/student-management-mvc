@@ -145,6 +145,32 @@
             font-size: 64px;
             margin-bottom: 20px;
         }
+        .pagination {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .pagination a {
+            padding: 8px 12px;
+            margin: 0 4px;
+            border: 1px solid #ddd;
+            text-decoration: none;
+            border-radius: 4px;
+            color: #333;
+        }
+
+        .pagination a:hover {
+            background: #eaeaea;
+        }
+
+        .pagination strong {
+            padding: 8px 12px;
+            margin: 0 4px;
+            background-color: #4CAF50;
+            color: white;
+            border: 1px solid #4CAF50;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
@@ -167,23 +193,125 @@
         </c:if>
         
         <!-- Add New Student Button -->
-        <div style="margin-bottom: 20px;">
-            <a href="student?action=new" class="btn btn-primary">
+        <div style="margin-bottom: 20px; display: flex; gap: 32px">
+            <a href="${pageContext.request.contextPath}/student?action=new"  class="btn btn-primary">
                 ➕ Add New Student
             </a>
+            <form action="${pageContext.request.contextPath}/student" method="get">
+                <input type="hidden" name="action" value="search">
+                <input type="text"
+                       name="keyword"
+                       placeholder="Search by name, code, or email"
+                       value="${keyword}"
+                       style="padding: 12px 24px; width: 250px; border-radius: 5px; border: 1px solid #ccc;">
+                <button type="submit" class="btn btn-primary">🔍 Search</button>
+            </form>
+        </div>      
+                       
+        <div style="margin-bottom: 20px;">
+            <form action="student" method="get">
+                <input type="hidden" name="action" value="filter">
+
+                <label><strong>Filter by Major:</strong></label>
+
+                <select name="major" style="padding: 12px 24px; width: 250px; border-radius: 5px; border: 1px solid #ccc;">
+                    <option value="">All Majors</option>
+
+                    <option value="Ecommerce" 
+                        ${selectedMajor == 'Ecommerce' ? 'selected' : ''}>
+                        Ecommerce
+                    </option>
+
+                    <option value="Marketing" 
+                        ${selectedMajor == 'Marketing' ? 'selected' : ''}>
+                        Marketing
+                    </option>
+
+                    <option value="Computer Science" 
+                        ${selectedMajor == 'Computer Science' ? 'selected' : ''}>
+                        Computer Science
+                    </option>
+
+                    <option value="Data Science" 
+                        ${selectedMajor == 'Data Science' ? 'selected' : ''}>
+                        Data Science
+                    </option>
+
+                    <option value="Information Technology" 
+                        ${selectedMajor == 'Information Technology' ? 'selected' : ''}>
+                        Information Technology
+                    </option>
+
+                    <option value="Software Engineering" 
+                        ${selectedMajor == 'Software Engineering' ? 'selected' : ''}>
+                        Software Engineering
+                    </option>
+
+                    <option value="Business Administration" 
+                        ${selectedMajor == 'Business Administration' ? 'selected' : ''}>
+                        Business Administration
+                    </option>
+                </select>
+
+                <button type="submit" class="btn btn-primary">Apply Filter</button>
+
+                <c:if test="${not empty selectedMajor}">
+                    <a href="student?action=list" style="margin-left: 10px;">Clear Filter</a>
+                </c:if>
+            </form>
         </div>
-        
+
         <!-- Student Table -->
         <c:choose>
             <c:when test="${not empty students}">
                 <table>
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Student Code</th>
-                            <th>Full Name</th>
-                            <th>Email</th>
-                            <th>Major</th>
+                            <th>
+                                <a href="student?action=sort&sortBy=id&order=${order == 'asc' ? 'desc' : 'asc'}">
+                                    ID
+                                    <c:if test="${sortBy == 'id'}">
+                                        ${order == 'asc' ? '▲' : '▼'}
+                                    </c:if>
+                                </a>
+                            </th>
+
+                            <th>
+                                <a href="student?action=sort&sortBy=student_code&order=${order == 'asc' ? 'desc' : 'asc'}">
+                                    Code
+                                    <c:if test="${sortBy == 'student_code'}">
+                                        ${order == 'asc' ? '▲' : '▼'}
+                                    </c:if>
+                                </a>
+                            </th>
+
+                            <th>
+                                <a href="student?action=sort&sortBy=full_name&order=${order == 'asc' ? 'desc' : 'asc'}">
+                                    Name
+                                    <c:if test="${sortBy == 'full_name'}">
+                                        ${order == 'asc' ? '▲' : '▼'}
+                                    </c:if>
+                                </a>
+                            </th>
+
+                            <th>
+                                <a href="student?action=sort&sortBy=email&order=${order == 'asc' ? 'desc' : 'asc'}">
+                                    Email
+                                    <c:if test="${sortBy == 'email'}">
+                                        ${order == 'asc' ? '▲' : '▼'}
+                                    </c:if>
+                                </a>
+                            </th>
+
+                            <th>
+                                <a href="student?action=sort&sortBy=major&order=${order == 'asc' ? 'desc' : 'asc'}">
+                                    Major
+                                    <c:if test="${sortBy == 'major'}">
+                                        ${order == 'asc' ? '▲' : '▼'}
+                                    </c:if>
+                                </a>
+                            </th>
+
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -211,6 +339,31 @@
                         </c:forEach>
                     </tbody>
                 </table>
+                <c:if test="${totalPages > 1}">
+                    <div class="pagination">
+                        <c:if test="${currentPage > 1}">
+                            <a href="student?action=list&page=${currentPage - 1}">« Previous</a>
+                        </c:if>
+                        <c:forEach begin="1" end="${totalPages}" var="i">
+                            <c:choose>
+                                <c:when test="${i == currentPage}">
+                                    <strong>${i}</strong>
+                                </c:when>
+                                <c:otherwise>
+                                    <a href="student?action=list&page=${i}">${i}</a>
+                                </c:otherwise>
+                            </c:choose>
+                        </c:forEach>
+                        <c:if test="${currentPage < totalPages}">
+                            <a href="student?action=list&page=${currentPage + 1}">Next »</a>
+                        </c:if>
+
+                    </div>
+                    <p style="text-align:center;">
+                        Showing page ${currentPage} of ${totalPages}
+                    </p>
+                </c:if>
+
             </c:when>
             <c:otherwise>
                 <div class="empty-state">

@@ -1,4 +1,4 @@
-package com.student.model;
+package com.web.studentmanagementmvc.student.model;
 
 import java.sql.Timestamp;
 
