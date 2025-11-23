@@ -1,6 +1,6 @@
-package com.web.studentmanagementmvc.student.dao;
+package com.student.dao;
 
-import com.web.studentmanagementmvc.student.model.Student;
+import com.student.model.Student;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;

@@ -1,7 +1,8 @@
-package com.web.studentmanagementmvc.student.controller;
+package com.student.controller;
 
-import com.web.studentmanagementmvc.student.dao.StudentDAO;
-import com.web.studentmanagementmvc.student.model.Student;
+import com.student.dao.*;
+import com.student.model.*;
+
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
